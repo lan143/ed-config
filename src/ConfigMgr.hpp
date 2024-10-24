@@ -1,10 +1,10 @@
 #pragma once
 
 #include <functional>
-#include "ConfigStorage.h"
+#include "ConfigStorage.hpp"
 
 #if defined(ESP32)
-    #include "ConfigStorageESP32.h"
+    #include "ConfigStorageESP32.hpp"
 #endif
 
 namespace Config
