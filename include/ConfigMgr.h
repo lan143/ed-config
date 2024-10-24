@@ -13,10 +13,11 @@ namespace Config
     {
     public:
         ConfigMgr();
+        ~ConfigMgr();
 
         bool load();
         bool store();
-        void setDefault(config_default_t fn) { _defaultFn = fn; }
+        void setDefault(config_default_t<T> fn) { _defaultFn = fn; }
 
         T& getConfig() { return _config; }
 
@@ -26,6 +27,6 @@ namespace Config
     private:
         T _config;
         ConfigStorage* _storage;
-        config_default_t _defaultFn;
+        config_default_t<T> _defaultFn;
     };
 }

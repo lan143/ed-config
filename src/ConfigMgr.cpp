@@ -13,6 +13,12 @@ Config::ConfigMgr<T>::ConfigMgr()
 }
 
 template<typename T>
+Config::ConfigMgr<T>::~ConfigMgr()
+{
+    delete _storage;
+}
+
+template<typename T>
 bool Config::ConfigMgr<T>::load()
 {
     ConfigStorageEntity<T> entity = _storage->load();

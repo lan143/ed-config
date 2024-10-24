@@ -24,7 +24,7 @@ namespace Config
     class ConfigStorage
     {
     public:
-        virtual configStorageEntity<T> load() = 0;
+        virtual ConfigStorageEntity<T> load() = 0;
         virtual bool store(ConfigStorageEntity<T> entity) = 0;
     };
 }
