@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Config
+namespace EDConfig
 {
     template<class T>
     class ConfigStorageEntity

@@ -4,7 +4,7 @@
     #include <EEPROM.h>
 #endif
 
-namespace Config
+namespace EDConfig
 {
     template<class T>
     class ConfigStorageESP32 : public ConfigStorage<T>
