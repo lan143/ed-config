@@ -1,8 +1,39 @@
-#include "ConfigMgr.h"
+#pragma once
+
+#include <functional>
+#include "ConfigStorage.h"
 
 #if defined(ESP32)
     #include "ConfigStorageESP32.h"
 #endif
+
+namespace Config
+{
+    template<class T>
+    using config_default_t = std::function<void(T&)>;
+
+    template<class T>
+    class ConfigMgr
+    {
+    public:
+        ConfigMgr();
+        ~ConfigMgr();
+
+        bool load();
+        bool store();
+        void setDefault(config_default_t<T> fn) { _defaultFn = fn; }
+
+        T& getConfig() { return _config; }
+
+    private:
+        uint16_t calculateChecksum(T &config);
+
+    private:
+        T _config;
+        ConfigStorage<T>* _storage;
+        config_default_t<T> _defaultFn;
+    };
+}
 
 template<typename T>
 Config::ConfigMgr<T>::ConfigMgr()
