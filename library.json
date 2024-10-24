@@ -1,0 +1,19 @@
+{
+    "name": "ed-config",
+    "keywords": "iot, home, automation, esp32",
+    "description": "Config storage implementation for Arduino",
+    "authors":
+    {
+      "name": "Artem Kravchenko",
+      "url": "https://lan143.ru"
+    },
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/lan143/ed-config.git"
+    },
+    "version": "0.1.0",
+    "frameworks": "arduino",
+    "platforms": ["espressif32"]
+  }
+  
