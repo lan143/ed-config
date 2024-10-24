@@ -7,7 +7,7 @@
 namespace Config
 {
     template<class T>
-    class ConfigStorageESP32 : ConfigStorage
+    class ConfigStorageESP32 : public ConfigStorage<T>
     {
     public:
         ConfigStorageEntity<T> load()
