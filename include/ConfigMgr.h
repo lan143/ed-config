@@ -26,7 +26,7 @@ namespace Config
 
     private:
         T _config;
-        ConfigStorage* _storage;
+        ConfigStorage<T>* _storage;
         config_default_t<T> _defaultFn;
     };
 }
