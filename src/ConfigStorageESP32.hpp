@@ -10,12 +10,14 @@ namespace EDConfig
     class ConfigStorageESP32 : public ConfigStorage<T>
     {
     public:
+        ConfigStorageESP32(int eepromSize) : ConfigStorage(eepromSize) { }
+
         ConfigStorageEntity<T> load()
         {
             T config = {};
             uint16_t checksum = 0;
 
-            EEPROM.begin(sizeof(config) + sizeof(checksum));
+            EEPROM.begin(_eepromSize);
             EEPROM.get(0, config);
             EEPROM.get(sizeof(config), checksum);
             EEPROM.end();
@@ -28,7 +30,7 @@ namespace EDConfig
             T config = entity.getConfig();
             uint16_t checksum = entity.getCheckSum();
 
-            EEPROM.begin(sizeof(config) + sizeof(checksum));
+            EEPROM.begin(_eepromSize);
             EEPROM.put(0, config);
             EEPROM.put(sizeof(config), checksum);
 

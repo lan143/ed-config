@@ -24,7 +24,11 @@ namespace EDConfig
     class ConfigStorage
     {
     public:
+        ConfigStorage(int eepromSize) : _eepromSize(eepromSize) {}
+
         virtual ConfigStorageEntity<T> load() = 0;
         virtual bool store(ConfigStorageEntity<T> entity) = 0;
+    protected:
+        int _eepromSize;
     };
 }

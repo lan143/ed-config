@@ -16,10 +16,10 @@ namespace EDConfig
     class ConfigMgr
     {
     public:
-        ConfigMgr()
+        ConfigMgr(int eepromSize)
         {
             #if defined(ESP32)
-                _storage = new ConfigStorageESP32<T>();
+                _storage = new ConfigStorageESP32<T>(eepromSize);
             #endif
         }
 
