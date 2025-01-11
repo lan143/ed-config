@@ -28,6 +28,7 @@ namespace EDConfig
 
         virtual ConfigStorageEntity<T> load() = 0;
         virtual bool store(ConfigStorageEntity<T> entity) = 0;
+        
     protected:
         int _eepromSize;
     };
