@@ -6,17 +6,17 @@ namespace EDConfig
     class ConfigStorageEntity
     {
     public:
-        ConfigStorageEntity(T config, uint16_t checksum)
+        ConfigStorageEntity(T* config, uint16_t checksum)
         {
             _config = config;
             _checksum = checksum;
         }
 
-        T getConfig() { return _config; }
+        T* getConfig() { return _config; }
         uint16_t getCheckSum() { return _checksum; }
 
     private:
-        T _config;
+        T* _config;
         uint16_t _checksum = 0;
     };
 

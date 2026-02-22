@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <esp_log.h>
 #include "ConfigStorage.hpp"
 
 #if defined(ESP32)
@@ -10,7 +11,7 @@
 namespace EDConfig
 {
     template<class T>
-    using config_default_t = std::function<void(T&)>;
+    using config_default_t = std::function<void(T*)>;
 
     template<class T>
     class ConfigMgr
@@ -30,16 +31,21 @@ namespace EDConfig
 
         bool load()
         {
+            ESP_LOGD("configMgr", "load from storage");
             ConfigStorageEntity<T> entity = _storage->load();
-            T config = entity.getConfig();
+            ESP_LOGD("configMgr", "get config");
+            _config = entity.getConfig();
+            ESP_LOGD("configMgr", "calculate checksum in eeprom");
             uint16_t checksum = entity.getCheckSum();
-            uint16_t configChecksum = calculateChecksum(config);
+            ESP_LOGD("configMgr", "calculate config checksum");
+            uint16_t configChecksum = calculateChecksum(_config);
 
+            ESP_LOGD("configMgr", "validate checksum");
             if (checksum == configChecksum) {
-                _config = config;
                 return true;
             }
 
+            ESP_LOGD("configMgr", "load defaults");
             if (_defaultFn != NULL) {
                 _defaultFn(_config);
             }
@@ -55,15 +61,15 @@ namespace EDConfig
         }
         void setDefault(config_default_t<T> fn) { _defaultFn = fn; }
 
-        T& getConfig() { return _config; }
+        T* getConfig() { return _config; }
 
     private:
-        uint16_t calculateChecksum(T &config)
+        uint16_t calculateChecksum(T* config)
         {
-            uint8_t *buf = (uint8_t *)&config;
+            auto *buf = reinterpret_cast<const uint8_t*>(config);
             uint16_t crc = 0xffff, poly = 0xa001;
             uint16_t i = 0;
-            uint16_t len = sizeof(config) - 2;
+            uint16_t len = sizeof(T) - 2;
 
             for (i = 0; i < len; i++) {
                 crc ^= buf[i];
@@ -80,7 +86,7 @@ namespace EDConfig
         }
 
     private:
-        T _config;
+        T* _config = nullptr;
         ConfigStorage<T>* _storage;
         config_default_t<T> _defaultFn;
     };
