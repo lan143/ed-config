@@ -34,21 +34,28 @@ namespace EDConfig
             ESP_LOGD("configMgr", "load from storage");
             ConfigStorageEntity<T> entity = _storage->load();
             ESP_LOGD("configMgr", "get config");
-            _config = entity.getConfig();
+            auto config = entity.getConfig();
             ESP_LOGD("configMgr", "calculate checksum in eeprom");
             uint16_t checksum = entity.getCheckSum();
-            ESP_LOGD("configMgr", "calculate config checksum");
-            uint16_t configChecksum = calculateChecksum(_config);
 
-            ESP_LOGD("configMgr", "validate checksum");
+            ESP_LOGD("configMgr", "calculate config checksum");
+            uint16_t configChecksum = calculateChecksum(config);
+
+            ESP_LOGD("configMgr", "validate checksum. from eeprom: %u, calculated: %u", checksum, configChecksum);
+
             if (checksum == configChecksum) {
+                _config = config;
                 return true;
             }
+
+            _config = new T();
 
             ESP_LOGD("configMgr", "load defaults");
             if (_defaultFn != NULL) {
                 _defaultFn(_config);
             }
+
+            store();
 
             return false;
         }
@@ -59,6 +66,7 @@ namespace EDConfig
 
             return _storage->store(ConfigStorageEntity<T>(_config, checksum));
         }
+
         void setDefault(config_default_t<T> fn) { _defaultFn = fn; }
 
         T* getConfig() { return _config; }
@@ -69,7 +77,7 @@ namespace EDConfig
             auto *buf = reinterpret_cast<const uint8_t*>(config);
             uint16_t crc = 0xffff, poly = 0xa001;
             uint16_t i = 0;
-            uint16_t len = sizeof(T) - 2;
+            uint16_t len = sizeof(T);
 
             for (i = 0; i < len; i++) {
                 crc ^= buf[i];

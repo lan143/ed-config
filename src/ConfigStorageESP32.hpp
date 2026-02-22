@@ -14,7 +14,7 @@ namespace EDConfig
 
         ConfigStorageEntity<T> load()
         {
-            T* config = new T;
+            T* config = new T();
             uint16_t checksum = 0;
 
             EEPROM.begin(this->_eepromSize);
