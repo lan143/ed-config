@@ -63,8 +63,7 @@ namespace EDConfig
         T* getData() { return _data; }
         void setData(T* data)
         {
-            delete _data;
-            _data = data;
+            memcpy(_data, data, sizeof(T));
         }
 
     private:
