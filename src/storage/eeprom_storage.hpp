@@ -9,31 +9,31 @@
 namespace EDConfig
 {
     template<class T>
-    class ConfigStorageESP32 : public ConfigStorage<T>
+    class StorageEEPROM : public Storage<T>
     {
     public:
-        ConfigStorageESP32(int eepromSize) : _eepromSize(eepromSize) { }
+        StorageEEPROM(int eepromSize) : _eepromSize(eepromSize) { }
 
         std::pair<T*, uint16_t> load()
         {
-            T* config = new T();
+            T* data = new T();
             uint16_t checksum = 0;
 
             EEPROM.begin(this->_eepromSize);
-            EEPROM.get(0, *config);
+            EEPROM.get(0, *data);
             EEPROM.get(sizeof(T), checksum);
             EEPROM.end();
 
-            return std::make_pair(config, checksum);
+            return std::make_pair(data, checksum);
         };
 
         bool store(std::pair<T*, uint16_t> entity)
         {
-            T* config = entity.first;
+            T* data = entity.first;
             uint16_t checksum = entity.second;
 
             EEPROM.begin(this->_eepromSize);
-            EEPROM.put(0, *config);
+            EEPROM.put(0, *data);
             EEPROM.put(sizeof(T), checksum);
 
             bool result = EEPROM.commit();

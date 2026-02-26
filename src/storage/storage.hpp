@@ -5,10 +5,10 @@
 namespace EDConfig
 {
     template<class T>
-    class ConfigStorage
+    class Storage
     {
     public:
-        ConfigStorage() {}
+        Storage() {}
 
         virtual std::pair<T*, uint16_t> load() = 0;
         virtual bool store(std::pair<T*, uint16_t> entity) = 0;
