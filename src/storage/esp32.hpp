@@ -4,15 +4,17 @@
     #include <EEPROM.h>
 #endif
 
+#include "storage.hpp"
+
 namespace EDConfig
 {
     template<class T>
     class ConfigStorageESP32 : public ConfigStorage<T>
     {
     public:
-        ConfigStorageESP32(int eepromSize) : ConfigStorage<T>(eepromSize) { }
+        ConfigStorageESP32(int eepromSize) : _eepromSize(eepromSize) { }
 
-        ConfigStorageEntity<T> load()
+        std::pair<T*, uint16_t> load()
         {
             T* config = new T();
             uint16_t checksum = 0;
@@ -22,13 +24,13 @@ namespace EDConfig
             EEPROM.get(sizeof(T), checksum);
             EEPROM.end();
 
-            return ConfigStorageEntity<T>(config, checksum);
+            return std::make_pair(config, checksum);
         };
 
-        bool store(ConfigStorageEntity<T> entity)
+        bool store(std::pair<T*, uint16_t> entity)
         {
-            T* config = entity.getConfig();
-            uint16_t checksum = entity.getCheckSum();
+            T* config = entity.first;
+            uint16_t checksum = entity.second;
 
             EEPROM.begin(this->_eepromSize);
             EEPROM.put(0, *config);
@@ -39,5 +41,8 @@ namespace EDConfig
 
             return result;
         };
+
+    private:
+        int _eepromSize;
     };
 }

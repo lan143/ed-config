@@ -2,11 +2,7 @@
 
 #include <functional>
 #include <esp_log.h>
-#include "ConfigStorage.hpp"
-
-#if defined(ESP32)
-    #include "ConfigStorageESP32.hpp"
-#endif
+#include "storage/storage.hpp"
 
 namespace EDConfig
 {
@@ -17,12 +13,7 @@ namespace EDConfig
     class ConfigMgr
     {
     public:
-        ConfigMgr(int eepromSize)
-        {
-            #if defined(ESP32)
-                _storage = new ConfigStorageESP32<T>(eepromSize);
-            #endif
-        }
+        ConfigMgr(ConfigStorage<T>* storage) : _storage(storage) { }
 
         ~ConfigMgr()
         {
@@ -32,11 +23,11 @@ namespace EDConfig
         bool load()
         {
             ESP_LOGD("configMgr", "load from storage");
-            ConfigStorageEntity<T> entity = _storage->load();
+            auto pair = _storage->load();
             ESP_LOGD("configMgr", "get config");
-            auto config = entity.getConfig();
+            auto config = pair.first;
             ESP_LOGD("configMgr", "calculate checksum in eeprom");
-            uint16_t checksum = entity.getCheckSum();
+            uint16_t checksum = pair.second;
 
             ESP_LOGD("configMgr", "calculate config checksum");
             uint16_t configChecksum = calculateChecksum(config);
@@ -64,7 +55,7 @@ namespace EDConfig
         {
             uint16_t checksum = calculateChecksum(_config);
 
-            return _storage->store(ConfigStorageEntity<T>(_config, checksum));
+            return _storage->store(std::make_pair(_config, checksum));
         }
 
         void setDefault(config_default_t<T> fn) { _defaultFn = fn; }
